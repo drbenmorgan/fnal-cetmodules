@@ -539,7 +539,9 @@ function(cet_test CET_TARGET)
         "TEST_EXEC without HANDBUILT")
     endif()
   else()
-    set(CET_TEST_EXEC ${CET_TARGET})
+    # This covers cases when we build the target, or another target is provided
+    # Can handbuilt be a non-target though?
+    set(CET_TEST_EXEC $<TARGET_FILE:${CET_TARGET}>)
   endif()
   if ((CET_HANDBUILT AND CET_PREBUILT) OR
       (CET_HANDBUILT AND CET_USE_CATCH_MAIN) OR
@@ -549,6 +551,8 @@ function(cet_test CET_TARGET)
       " CET_HANDBUILT, CET_PREBUILT, or CET_USE_CATCH_MAIN options set.")
   elseif (CET_PREBUILT) # eg scripts.
     cet_script(${CET_TARGET} ${CET_NO_INSTALL} DEPENDENCIES ${CET_DEPENDENCIES})
+    # Use absolute path to cet_script outpute
+    set(CET_TEST_EXEC "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${CET_TARGET}")
   elseif (NOT CET_HANDBUILT) # Normal build, possibly with CET_USE_CATCH_MAIN set.
     # Build the executable.
     if (NOT CET_SOURCE) # Useful default.
