@@ -538,9 +538,12 @@ function(cet_test CET_TARGET)
       message(FATAL_ERROR "cet_test: target ${CET_TARGET} cannot specify "
         "TEST_EXEC without HANDBUILT")
     endif()
+    if(TARGET ${CET_TEST_EXEC})
+      set(CET_TEST_EXEC $<TARGET_FILE:${CET_TEST_EXEC}>)
+    endif()
   else()
-    # This covers cases when we build the target, or another target is provided
-    # Can handbuilt be a non-target though?
+    # This covers cases when we build the target, PREBUILT check in next
+    # block covers PREBUILT
     set(CET_TEST_EXEC $<TARGET_FILE:${CET_TARGET}>)
   endif()
   if ((CET_HANDBUILT AND CET_PREBUILT) OR
