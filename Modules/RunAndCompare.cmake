@@ -32,7 +32,12 @@
 #   DEFAULT to specify the default filter(s) somewhere in the chain.
 ########################################################################
 # Defaults
-set(DEFAULT_FILTERS filter-output)
+# - Relies on this script always being installed "one-level-over" from
+#   binary directory. If changed, RunAndCompare.cmake would need generating
+#   using relative path from its install location to binary location
+get_filename_component(cetmodules_bin_dir "${CMAKE_CURRENT_LIST_DIR}/../bin" ABSOLUTE)
+
+set(DEFAULT_FILTERS "${cetmodules_bin_dir}/filter-output")
 
 if (DEFINED ART_COMPAT)
   list(INSERT DEFAULT_FILTERS 0 "filter-output-art-compat")

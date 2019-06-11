@@ -1,5 +1,7 @@
 include(CMakeParseArguments)
 
+set(CCV_EXECUTABLE "${cetmodules_bin_dir}/checkClassVersion")
+
 set(CCV_DEFAULT_RECURSIVE FALSE
   CACHE BOOL "Default setting for recursive checks by checkClassVersion (may be time-consuming)."
   )
@@ -69,7 +71,7 @@ function(check_class_version)
     # Add the check to the end of the dictionary building step.
     add_custom_command(OUTPUT ${dictname}_dict_checked
       COMMAND ${CMAKE_COMMAND} -E env ${CMD_ENV}
-      checkClassVersion ${CCV_EXTRA_ARGS}
+      ${CCV_EXECUTABLE} ${CCV_EXTRA_ARGS}
       -l $<TARGET_PROPERTY:${dictname}_dict,LIBRARY_OUTPUT_DIRECTORY>/${CMAKE_SHARED_LIBRARY_PREFIX}${dictname}_dict
       -x ${CCV_CLASSES_DEF_XML}
       -t ${dictname}_dict_checked
