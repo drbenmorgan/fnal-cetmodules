@@ -143,4 +143,13 @@ macro(cet_cmake_config)
   install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_PROJECT_NAME}Config.cmake
         	 ${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_PROJECT_NAME}ConfigVersion.cmake
            DESTINATION ${distdir})
+
+  # Likely ONLY need this if the list of libs is non empty?
+  # Seems to be no direct way to check export set existence
+  if(CONFIG_LIBRARY_LIST)
+    # Build tree
+    export(EXPORT ${CMAKE_PROJECT_NAME}Exports NAMESPACE ${CMAKE_PROJECT_NAME}::)
+    # Install tree
+    install(EXPORT ${CMAKE_PROJECT_NAME}Exports NAMESPACE ${CMAKE_PROJECT_NAME}:: DESTINATION ${distdir})
+  endif()
 endmacro()

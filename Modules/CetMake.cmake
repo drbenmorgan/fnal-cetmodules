@@ -314,6 +314,13 @@ macro(cet_make_library)
     message(FATAL_ERROR "LIBRARY_NAME is required \n ${cet_make_library_usage}")
   endif()
 
+  # Can set project level include dirs here, user can use same command
+  # after call to cet_make_library
+  # Use PUBLIC to match include_directories behaviour
+  target_include_directories(${CML_LIBRARY_NAME} PUBLIC
+    "$<BUILD_INTERFACE:${PROJECT_SOURCE_DIR};${PROJECT_BINARY_DIR}>"
+    "$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>")
+
   if(CML_LIBRARIES)
     set(cml_lib_list "")
     foreach (lib ${CML_LIBRARIES})
@@ -346,6 +353,7 @@ macro(cet_make_library)
   else()
     cet_add_to_library_list(${CML_LIBRARY_NAME})
     install(TARGETS ${CML_LIBRARY_NAME}
+      EXPORT ${CMAKE_PROJECT_NAME}Exports
       RUNTIME DESTINATION ${${CMAKE_PROJECT_NAME}_bin_dir}
 	    LIBRARY DESTINATION ${${CMAKE_PROJECT_NAME}_lib_dir}
 	    ARCHIVE DESTINATION ${${CMAKE_PROJECT_NAME}_lib_dir})
@@ -353,6 +361,9 @@ macro(cet_make_library)
 
   if(CML_WITH_STATIC_LIBRARY)
     add_library(${CML_LIBRARY_NAME}S STATIC ${cet_src_list})
+    target_include_directories(${CML_LIBRARY_NAME}S PUBLIC
+      "$<BUILD_INTERFACE:${PROJECT_SOURCE_DIR};${PROJECT_BINARY_DIR}>"
+      "$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>")
 
     if(CML_LIBRARIES)
       target_link_libraries(${CML_LIBRARY_NAME}S ${cml_lib_list})
@@ -367,6 +378,7 @@ macro(cet_make_library)
       #message(STATUS "cet_make_library debug: ${CML_LIBRARY_NAME}S will not be installed")
     else()
       install(TARGETS ${CML_LIBRARY_NAME}S
+        EXPORT ${CMAKE_PROJECT_NAME}Exports
 	      RUNTIME DESTINATION ${${CMAKE_PROJECT_NAME}_bin_dir}
 	      LIBRARY DESTINATION ${${CMAKE_PROJECT_NAME}_lib_dir}
 	      ARCHIVE DESTINATION ${${CMAKE_PROJECT_NAME}_lib_dir})

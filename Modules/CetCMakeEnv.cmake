@@ -155,10 +155,6 @@ macro(cet_cmake_env)
   # initialize cmake config file fragments
   _cet_init_config_var()
 
-  # add to the include path
-  include_directories("${PROJECT_BINARY_DIR}")
-  include_directories("${PROJECT_SOURCE_DIR}")
-
   # make sure all libraries and executables are in one directory
   set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/${${CMAKE_PROJECT_NAME}_lib_dir})
   set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/${${CMAKE_PROJECT_NAME}_lib_dir})
