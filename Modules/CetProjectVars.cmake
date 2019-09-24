@@ -72,6 +72,10 @@ function(cet_project_var VAR_NAME)
     endif()
     set(clause "set(${CMAKE_PROJECT_NAME}_${VAR_NAME} \"@${CMAKE_PROJECT_NAME}_${VAR_NAME}@\")")
   endif()
+
+  # NB: This results in an ever extending list each time CMake is rerun
+  # Likely needs splitting up into more functions/properties to enable better checking,
+  # or fresh construction of this list when needed.
   set(${CMAKE_PROJECT_NAME}_DEFINITIONS_LIST ${${CMAKE_PROJECT_NAME}_DEFINITIONS_LIST} ${clause}
     CACHE INTERNAL "Project variable definitions")
 endfunction()
