@@ -77,23 +77,19 @@ macro(cet_cmake_env)
   endif()
   cmake_parse_arguments(CCE "ARCH_INCLUDEDIR" "" "" ${ARGN})
 
-  if (CCE_ARCH_INCLUDEDIR)
+  if(CCE_ARCH_INCLUDEDIR)
     list(APPEND _ARCH_DEP_DIRS INCLUDE)
   endif()
 
   string(TOLOWER ${CMAKE_PROJECT_NAME} ${CMAKE_PROJECT_NAME}_LC)
-  if (CCE_UPS_PRODUCT_NAME)
+  if(CCE_UPS_PRODUCT_NAME)
     set(product ${CCE_UPS_PRODUCT_NAME})
   else()
     set(product ${${CMAKE_PROJECT_NAME}_LC})
   endif()
 
   string(TOUPPER ${CMAKE_PROJECT_NAME} ${CMAKE_PROJECT_NAME}_UC)
-  ##message(STATUS "CMAKE_PROJECT_NAME: ${CMAKE_PROJECT_NAME}")
-  ##message(STATUS "CMAKE_PROJECT_NAME: ${CMAKE_PROJECT_NAME}")
-  ##message(STATUS "PROJECT_SOURCE_DIR: ${PROJECT_SOURCE_DIR}")
-  ##message(STATUS "PROJECT_BINARY_DIR: ${PROJECT_BINARY_DIR}")
-  
+
   # Acknowledge new RPATH behavior on OS X.
   cmake_policy(SET CMP0042 NEW)
   # Ensure link path is used in install RPATH.
@@ -103,10 +99,10 @@ macro(cet_cmake_env)
   enable_testing()
 
   # If we're dealing with UPS.
-  if (WANT_UPS)
+  if(WANT_UPS)
     include(Ups)
     set_ups_variables(${CCE_UNPARSED_ARGUMENTS})
-    if (CMAKE_INSTALL_PREFIX)
+    if(CMAKE_INSTALL_PREFIX)
       string(APPEND CMAKE_INSTALL_PREFIX "/${UPS_PRODUCT_SUBDIR}")
       _ups_init_cpack()
     endif()
@@ -162,29 +158,31 @@ macro(cet_cmake_env)
   # add to the include path
   include_directories("${PROJECT_BINARY_DIR}")
   include_directories("${PROJECT_SOURCE_DIR}")
-  # make sure all libraries are in one directory
+
+  # make sure all libraries and executables are in one directory
   set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/${${CMAKE_PROJECT_NAME}_lib_dir})
   set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/${${CMAKE_PROJECT_NAME}_lib_dir})
-  # make sure all executables are in one directory
   set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/${${CMAKE_PROJECT_NAME}_bin_dir})
 
   # install license and readme if found
   install_license()
-endmacro(cet_cmake_env)
+endmacro()
+
 
 macro(_cet_debug_message)
-  string(TOUPPER ${CMAKE_BUILD_TYPE} BTYPE_UC )
-  if( ${BTYPE_UC} MATCHES "DEBUG" )
-    message( STATUS "${ARGN}")
+  string(TOUPPER ${CMAKE_BUILD_TYPE} BTYPE_UC)
+  if(${BTYPE_UC} MATCHES "DEBUG")
+    message(STATUS "${ARGN}")
   endif()
-endmacro(_cet_debug_message)
+endmacro()
 
-macro( set_install_root )
-  set( PACKAGE_TOP_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
-  #message( STATUS "set_install_root: PACKAGE_TOP_DIRECTORY is ${PACKAGE_TOP_DIRECTORY}")
-endmacro( set_install_root )
 
-if (NOT WANT_UPS)
+macro(set_install_root)
+  set(PACKAGE_TOP_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
+endmacro()
+
+
+if(NOT WANT_UPS)
   macro(process_ups_files)
     message(FATAL_ERROR "Set the CMake variable WANT_UPS prior to including CetCMakeEnv.cmake to activate UPS table file and tarball generation.")
   endmacro()

@@ -81,68 +81,66 @@ function(_config_package_config_file)
     )
 endfunction()
 
-macro( cet_cmake_config  )
 
-  cmake_parse_arguments( CCC "NO_FLAVOR" "" "CONFIG_FRAGMENTS" ${ARGN})
+macro(cet_cmake_config)
+  cmake_parse_arguments(CCC "NO_FLAVOR" "" "CONFIG_FRAGMENTS" ${ARGN})
 
-  if( CCC_NO_FLAVOR )
+  if(CCC_NO_FLAVOR)
     set( distdir "." )
   else()
     set( distdir "${${CMAKE_PROJECT_NAME}_lib_dir}/${CMAKE_PROJECT_NAME}/cmake" )
   endif()
 
-  #message(STATUS "cet_cmake_config debug: will install cmake configure files in ${distdir}")
-  #message(STATUS "cet_cmake_config debug: ${CONFIG_FIND_LIBRARY_COMMAND_LIST}")
-  #message(STATUS "cet_cmake_config debug: ${CONFIG_LIBRARY_LIST}")
-
-  string(TOUPPER  ${CMAKE_PROJECT_NAME} ${CMAKE_PROJECT_NAME}_UC )
+  string(TOUPPER ${CMAKE_PROJECT_NAME} ${CMAKE_PROJECT_NAME}_UC)
   # add to library list for package configure file
-  foreach( my_library ${CONFIG_LIBRARY_LIST} )
-    string(TOUPPER  ${my_library} ${my_library}_UC )
-    string(TOUPPER  ${CMAKE_PROJECT_NAME} ${CMAKE_PROJECT_NAME}_UC )
+  foreach(my_library ${CONFIG_LIBRARY_LIST})
+    string(TOUPPER ${my_library} ${my_library}_UC)
+    string(TOUPPER ${CMAKE_PROJECT_NAME} ${CMAKE_PROJECT_NAME}_UC)
     get_target_property(lib_type ${my_library} TYPE)
     get_target_property(lib_basename ${my_library} LIBRARY_OUTPUT_NAME)
-    if (NOT lib_basename)
+
+    if(NOT lib_basename)
       get_target_property(prefix ${my_library} PREFIX)
       get_target_property(suffix ${my_library} SUFFIX)
-      if (lib_type STREQUAL "STATIC_LIBRARY")
-        if (prefix STREQUAL "prefix-NOTFOUND")
+
+      if(lib_type STREQUAL "STATIC_LIBRARY")
+        if(prefix STREQUAL "prefix-NOTFOUND")
           set(prefix ${CMAKE_STATIC_LIBRARY_PREFIX})
         endif()
-        if (suffix STREQUAL "suffix-NOTFOUND")
+
+        if(suffix STREQUAL "suffix-NOTFOUND")
           set(suffix ${CMAKE_STATIC_LIBRARY_SUFFIX})
         endif()
       elseif(lib_type STREQUAL "SHARED_LIBRARY")
-        if (prefix STREQUAL "prefix-NOTFOUND")
+        if(prefix STREQUAL "prefix-NOTFOUND")
           set(prefix ${CMAKE_SHARED_LIBRARY_PREFIX})
         endif()
-        if (suffix STREQUAL "suffix-NOTFOUND")
+
+        if(suffix STREQUAL "suffix-NOTFOUND")
           set(suffix ${CMAKE_SHARED_LIBRARY_SUFFIX})
         endif()
       else()
         message(FATAL_ERROR "cet_make_config(): Unrecognized lib_type ${lib_type} for target ${my_library}")
       endif()
+
       set(lib_basename ${prefix}${my_library}${suffix})
+
     endif()
     list(APPEND CONFIG_FIND_LIBRARY_COMMAND_LIST
       "set_and_check(${${my_library}_UC} \"\${${CMAKE_PROJECT_NAME}_lib_dir}/${lib_basename}\")"
       )
-  endforeach(my_library)
-  #message(STATUS "cet_cmake_config debug: ${CONFIG_FIND_LIBRARY_COMMAND_LIST}")
+  endforeach()
 
   _config_package_config_file(${CCC_CONFIG_FRAGMENTS})
 
   # allowed COMPATIBILITY values are:
   # AnyNewerVersion ExactVersion SameMajorVersion
-  #message(STATUS "cet_cmake_config: CMAKE_PROJECT_NAME ${CMAKE_PROJECT_NAME}")
-  #message(STATUS "cet_cmake_config: CMAKE_PROJECT_VERSION ${CMAKE_PROJECT_VERSION}")
   write_basic_package_version_file(
     ${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_PROJECT_NAME}ConfigVersion.cmake
 	  VERSION ${CMAKE_PROJECT_VERSION}
-	  COMPATIBILITY AnyNewerVersion )
+	  COMPATIBILITY AnyNewerVersion)
 
-  install( FILES ${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_PROJECT_NAME}Config.cmake
+  install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_PROJECT_NAME}Config.cmake
         	 ${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_PROJECT_NAME}ConfigVersion.cmake
-           DESTINATION ${distdir} )
-
-endmacro( cet_cmake_config )
+           DESTINATION ${distdir})
+endmacro()
